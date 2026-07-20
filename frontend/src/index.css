@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Russo+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap');
+:root {
+  --background: #0a0a0a;
+  /* --foreground: #ff8c00; */
+  --foreground: #c45c1a;
+  --text-light: #f0ece4;
+  --secondary:#141414;
+  background-color: #0a0a0a;
+}
+body,html{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: #0a0a0a;
+}
