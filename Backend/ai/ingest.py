@@ -1,4 +1,6 @@
+import json
 import time
+import gzip
 from upload import upload_movies
 from embed import embed_text, embed_batch
 from dotenv import load_dotenv
@@ -159,13 +161,36 @@ def build_document(movie):
     Reviews: 
     {reviews}  
     """
+
+def batch_gen_movie_id(filename, batch_size=100):
+    """
+    Generate batches of movie IDs from a file.
+
+    Args:
+        filename (str): The name of the file containing movie IDs.
+        batch_size (int): The number of movie IDs to include in each batch. Defaults to 100.
+    
+    Yields:
+        list: A list of movie IDs for the current batch.
+    """
+    batch = []
+    with gzip.open(filename, 'rt') as f:
+        for line in f:
+            movie_id = json.loads(line).get("id")
+            if movie_id:
+                batch.append(movie_id)
+                if len(batch) == batch_size:
+                    yield batch
+                    batch = []
+        if batch:
+            yield batch
+
 if __name__ == "__main__":
-    for page in range(45, 3000):  # Fetch first 2 pages of popular movies
-        movies = get_movies(page)
+    for ids in batch_gen_movie_id("ai/movie_ids_07_20_2026.json.gz", batch_size=100):
         detailed_movies = []
         documents = []
         with ThreadPoolExecutor(max_workers=10) as executor:
-            results = list(executor.map(lambda movie: get_movie(movie["id"]), movies))
+            results = list(filter(None, executor.map(get_movie, ids)))
             for detailed_movie in results:
                 if detailed_movie:
                     detailed_movies.append(detailed_movie)
